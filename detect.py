@@ -9,11 +9,7 @@ WEIGHTS = "models/plate_detector/best.pt"  # change to the path find printed
 model = YOLO(WEIGHTS)
 
 
-def detect_plates(image_path, conf=0.25, pad=0.05):
-    img = cv2.imread(str(image_path))
-    if img is None:
-        raise ValueError(f"Could not read {image_path}")
-
+def detect_plates(img, conf=0.25, pad=0.05):
     h, w = img.shape[:2]
     result = model.predict(img, conf=conf, device="mps", verbose=False)[0]
 
@@ -37,7 +33,8 @@ def detect_plates(image_path, conf=0.25, pad=0.05):
 
 if __name__ == "__main__":
     src = Path(sys.argv[1])
-    found = detect_plates(src)
+    img = cv2.imread(str(src))
+    found = detect_plates(img)
     print(f"{len(found)} plate(s) found")
     for i, p in enumerate(found):
         out = f"crop_{i}.jpg"
